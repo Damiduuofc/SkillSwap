@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Firebase Database Test</h1>
+    
+    <div class="test-section info">
+        <h3>Test Firebase Connection</h3>
+        <button onclick="testConnection()">Test Connection</button>
+        <div id="connection-result"></div>
+    </div>
+    
+    <div class="test-section info">
+        <h3>Test Database Write</h3>
+        <button onclick="testWrite()">Test Write Data</button>
+        <div id="write-result"></div>
+    </div>
+    
+    <div class="test-section info">
+        <h3>Test Database Read</h3>
+        <button onclick="testRead()">Test Read Data</button>
+        <div id="read-result"></div>
+    </div>
+    
+    <div class="test-section info">
+        <h3>Test User Profile Save</h3>
+        <button onclick="testUserSave()">Test Save User Profile</button>
+        <div id="user-save-result"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        function updateResult(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = message;
+            element.className = isError ? 'error' : 'success';
+        }
+        
+        function testConnection() {
+            try {
+                if (window.firebase && window.firebaseAuth && window.firebaseFirestore) {
+                    updateResult('connection-result', '✅ Firebase is properly initialized and connected!');
+                } else {
+                    updateResult('connection-result', '❌ Firebase is not properly initialized', true);
+                }
+            } catch (error) {
+                updateResult('connection-result', '❌ Error: ' + error.message, true);
+            }
+        }
+        
+        function testWrite() {
+            updateResult('write-result', '⚠ Firestore disabled due to CORS issues. Using localStorage instead.');
+            
+            // Test localStorage instead
+            const testData = {
+                test: true,
+                timestamp: new Date().toISOString(),
+                message: 'This is a test document'
+            };
+            
+            try {
+                localStorage.setItem('test-data', JSON.stringify(testData));
+                updateResult('write-result', '✅ Successfully wrote test data to localStorage!');
+            } catch (error) {
+                updateResult('write-result', '❌ Error writing to localStorage: ' + error.message, true);
+            }
+        }
+        
+        function testRead() {
+            updateResult('read-result', '⚠ Firestore disabled due to CORS issues. Using localStorage instead.');
+            
+            // Test localStorage instead
+            try {
+                const data = localStorage.getItem('test-data');
+                if (data) {
+                    const parsedData = JSON.parse(data);
+                    updateResult('read-result', '✅ Successfully read data from localStorage: <pre>' + JSON.stringify(parsedData, null, 2) + '</pre>');
+                } else {
+                    updateResult('read-result', '⚠ No data found in localStorage. Try running the write test first.');
+                }
+            } catch (error) {
+                updateResult('read-result', '❌ Error reading from localStorage: ' + error.message, true);
+            }
+        }
+        
+        function testUserSave() {
+            updateResult('user-save-result', '⚠ Firestore disabled due to CORS issues. Using localStorage instead.');
+            
+            // Test localStorage instead
+            const testUser = {
+                uid: 'test-user-' + Date.now(),
+                username: 'TestUser',
+                email: 'test@example.com',
+                teachSkills: ['JavaScript', 'Python'],
+                learnSkills: ['React', 'Node.js'],
+                createdAt: new Date().toISOString()
+            };
+            
+            try {
+                localStorage.setItem('test-user', JSON.stringify(testUser));
+                updateResult('user-save-result', '✅ Successfully saved user profile to localStorage: <pre>' + JSON.stringify(testUser, null, 2) + '</pre>');
+            } catch (error) {
+                updateResult('user-save-result', '❌ Error saving user profile: ' + error.message, true);
+            }
+        }
+        
+        // Auto-test connection on load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(testConnection, 1000);
+        });
+    </script>
+</body>
+</html>

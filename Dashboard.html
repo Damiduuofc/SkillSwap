@@ -83,6 +83,7 @@
         .welcome span {
             background: linear-gradient(90deg, #1F6F96 0%, #94D7F8 100%);
             -webkit-background-clip: text;
+            background-clip: text;
             color: transparent;
         }
 
@@ -123,6 +124,8 @@
             text-align: center;
             transition: transform 0.3s, box-shadow 0.3s;
             height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .card:hover {
@@ -134,6 +137,32 @@
             border-radius: 8px 8px 0 0;
             height: 180px;
             object-fit: cover;
+        }
+
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
+        }
+
+        .send-request-btn {
+            background: linear-gradient(90deg, #1F6F96 0%, #94D7F8 100%);
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .send-request-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 153, 255, 0.4);
+            background: linear-gradient(90deg, #1672a2 0%, #6fc0eb 100%);
         }
 
         .suggested {
@@ -283,16 +312,20 @@
                 <button class="teach-btn">Teach a Skill</button>
             </div>
         </div>
+
         <div class="main">
             <div class="welcome"><span>Welcome back</span>, <span id="welcome-username">Sophia</span></div>
+
             <div class="profile-box">
                 <div>
                     <strong id="profile-name">Sophia Bennett</strong>
                     <div class="profile-info" id="profile-skills">Teaching: Photography, Learning: Spanish</div>
-                    <button class="btn btn-outline-secondary">Find Matches</button>
+                  
+                    <a href="browse.html"><button class="btn btn-outline-secondary">Find Matches</button></a> 
                 </div>
                 <img src="./public/pp.png" alt="Profile Picture" class="profile-img">
             </div>
+
             <div class="suggested">
                 <h4 class="mb-3">Suggested for you</h4>
                 <div class="row g-3">
@@ -302,6 +335,7 @@
                             <div class="card-body">
                                 <strong>Ethan Carter</strong>
                                 <p class="card-text">Learning: Photography<br>Teaching: French</p>
+                                <button class="btn send-request-btn" onclick="sendRequest('Ethan Carter')">Send Request</button>
                             </div>
                         </div>
                     </div>
@@ -311,6 +345,7 @@
                             <div class="card-body">
                                 <strong>Olivia Harper</strong>
                                 <p class="card-text">Learning: Spanish<br>Teaching: Graphic Design</p>
+                                <button class="btn send-request-btn" onclick="sendRequest('Olivia Harper')">Send Request</button>
                             </div>
                         </div>
                     </div>
@@ -320,6 +355,7 @@
                             <div class="card-body">
                                 <strong>Liam Walker</strong>
                                 <p class="card-text">Learning: Photography<br>Teaching: Cooking</p>
+                                <button class="btn send-request-btn" onclick="sendRequest('Liam Walker')">Send Request</button>
                             </div>
                         </div>
                     </div>
@@ -329,13 +365,16 @@
                             <div class="card-body">
                                 <strong>Ava Bennett</strong>
                                 <p class="card-text">Learning: Spanish<br>Teaching: Yoga</p>
+                                <button class="btn send-request-btn" onclick="sendRequest('Ava Bennett')">Send Request</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
+
     <footer class="footer">
         <div class="container">
             <div class="row">
@@ -390,13 +429,16 @@
             </div>
         </div>
     </footer>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <script src="/firebase-config.js"></script>
-    <script src="/ui-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="ui-auth.js"></script>
+
     <script>
-        // Update dashboard with user profile data
+        // Dashboard update
         document.addEventListener('DOMContentLoaded', function() {
             function updateDashboardWithUserData() {
                 try {
@@ -404,48 +446,38 @@
                     if (currentUser) {
                         var userProfile = JSON.parse(currentUser);
                         var username = userProfile.username || userProfile.email || 'User';
-                        
-                        // Update sidebar username
-                        var sidebarUsername = document.getElementById('sidebar-username');
-                        if (sidebarUsername) {
-                            sidebarUsername.textContent = username;
-                        }
-                        
-                        // Update welcome message
-                        var welcomeUsername = document.getElementById('welcome-username');
-                        if (welcomeUsername) {
-                            welcomeUsername.textContent = username;
-                        }
-                        
-                        // Update profile name
-                        var profileName = document.getElementById('profile-name');
-                        if (profileName) {
-                            profileName.textContent = username;
-                        }
-                        
-                        // Update profile skills if available
+                        document.getElementById('sidebar-username').textContent = username;
+                        document.getElementById('welcome-username').textContent = username;
+                        document.getElementById('profile-name').textContent = username;
+
                         var profileSkills = document.getElementById('profile-skills');
-                        if (profileSkills && userProfile.teachSkill && userProfile.learnSkill) {
-                            profileSkills.textContent = 'Teaching: ' + userProfile.teachSkill + ', Learning: ' + userProfile.learnSkill;
+                        if (profileSkills) {
+                            var teachSkills = userProfile.teachSkills || (userProfile.teachSkill ? [userProfile.teachSkill] : []);
+                            var learnSkills = userProfile.learnSkills || (userProfile.learnSkill ? [userProfile.learnSkill] : []);
+                            var teachText = teachSkills.length > 0 ? 'Teaching: ' + teachSkills.join(', ') : '';
+                            var learnText = learnSkills.length > 0 ? 'Learning: ' + learnSkills.join(', ') : '';
+                            profileSkills.textContent = teachText && learnText ? teachText + ', ' + learnText : (teachText || learnText || 'No skills specified yet');
                         }
+                    } else {
+                        window.location.href = 'login.html';
                     }
                 } catch (e) {
-                    console.warn('Error updating dashboard with user data:', e);
+                    console.warn('Error updating dashboard:', e);
+                    window.location.href = 'login.html';
                 }
             }
-            
-            // Update immediately
             updateDashboardWithUserData();
-            
-            // Also update when Firebase auth state changes
             if (window.firebaseAuth) {
                 firebaseAuth.onAuthStateChanged(function(user) {
-                    if (user) {
-                        updateDashboardWithUserData();
-                    }
+                    if (!user) window.location.href = 'login.html';
                 });
             }
         });
+
+        // Send request button
+        function sendRequest(user) {
+            alert('Request sent to ' + user + '!');
+        }
     </script>
 </body>
 </html>
