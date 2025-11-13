@@ -607,10 +607,10 @@
                                 <h3>Sarah M.</h3>
                                 <p>Mutual Skills: Teach - Photography, Learn - Spanish</p>
                             </div>
-                            <div class="card-buttons">
-                                <button class="start-chat">Start Chat</button>
-                                <button class="send-request">Send Request</button>
-                            </div>
+                                <div class="card-buttons">
+                                        <button class="start-chat">Start Chat</button>
+                                        <button class="send-request">Send Request</button>
+                                    </div>
                         </div>
                         <div class="item">
                             <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="David L.">
@@ -747,18 +747,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="/firebase-config.js"></script>
     <script src="/ui-auth.js"></script>
     <script>
-        // Update Match page with user profile data
+        // Update Match page with user profile data and show matches from Firestore
         document.addEventListener('DOMContentLoaded', function() {
-            function updateMatchWithUserData() {
+            function updateSidebarUsername() {
                 try {
                     var currentUser = localStorage.getItem('currentUser');
                     if (currentUser) {
                         var userProfile = JSON.parse(currentUser);
                         var username = userProfile.username || userProfile.email || 'User';
-                        // Update sidebar username
                         var sidebarUsername = document.getElementById('sidebar-username');
                         if (sidebarUsername) {
                             sidebarUsername.textContent = username;
@@ -768,15 +768,128 @@
                     console.warn('Error updating Match page with user data:', e);
                 }
             }
-            // Update immediately
-            updateMatchWithUserData();
+
+            // Firestore matching logic
+            async function showMatches() {
+                try {
+                    // Get current user info from localStorage
+                    var currentUser = localStorage.getItem('currentUser');
+                    if (!currentUser) return;
+                    var userProfile = JSON.parse(currentUser);
+                    var learnSkills = userProfile.learnSkills || [];
+                    if (!Array.isArray(learnSkills) || learnSkills.length === 0) return;
+
+                    // Firestore setup
+                    var db = firebase.firestore();
+                    // Query for users whose 'teachSkills' array contains any of the user's 'learnSkills'
+                    var matches = [];
+                    for (let skill of learnSkills) {
+                        let snapshot = await db.collection('users').where('teachSkills', 'array-contains', skill).get();
+                        snapshot.forEach(doc => {
+                            let data = doc.data();
+                            // Avoid showing current user
+                            if (data.uid !== userProfile.uid) {
+                                matches.push({
+                                    name: data.username || data.email || 'User',
+                                    photo: data.photoURL || 'https://randomuser.me/api/portraits/lego/1.jpg',
+                                    teach: data.teachSkills ? data.teachSkills.join(', ') : '',
+                                    learn: data.learnSkills ? data.learnSkills.join(', ') : '',
+                                });
+                            }
+                        });
+                    }
+
+                    // Remove duplicates
+                    matches = matches.filter((v,i,a)=>a.findIndex(t=>(t.name===v.name))===i);
+
+                    // Render matches
+                    var contentDiv = document.querySelector('.content');
+                    if (contentDiv) {
+                        contentDiv.innerHTML = '';
+                        if (matches.length === 0) {
+                            contentDiv.innerHTML = '<p>No matches found for your learning needs.</p>';
+                        } else {
+                            matches.forEach(match => {
+                                var item = document.createElement('div');
+                                item.className = 'item';
+                                item.innerHTML = `
+                                    <img src="${match.photo}" alt="${match.name}">
+                                    <div class="details">
+                                        <h3>${match.name}</h3>
+                                        <p>Mutual Skills: Teach - ${match.teach}, Learn - ${match.learn}</p>
+                                    </div>
+                                    <div class="card-buttons">
+                                        <button class="start-chat">Start Chat</button>
+                                        <button class="send-request">Send Request</button>
+                                    </div>
+                                `;
+                                contentDiv.appendChild(item);
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Error fetching matches:', e);
+                }
+            }
+
+            updateSidebarUsername();
+            showMatches();
+
             // Also update when Firebase auth state changes
             if (window.firebaseAuth) {
                 firebaseAuth.onAuthStateChanged(function(user) {
                     if (user) {
-                        updateMatchWithUserData();
+                        updateSidebarUsername();
+                        showMatches();
                     }
                 });
+            }
+        });
+    </script>
+    <!-- Toast for request confirmation -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="requestToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">SkillSwap</strong>
+                <small>Now</small>
+                <button type="button" class="btn-close ms-2 mb-1" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Request sent successfully.
+            </div>
+        </div>
+    </div>
+    <script>
+        // Delegate click handlers for Start Chat and Send Request buttons
+        document.addEventListener('click', function(e) {
+            // Start Chat: save target to localStorage and navigate to Messages.html
+            if (e.target && e.target.classList && e.target.classList.contains('start-chat')) {
+                var item = e.target.closest('.item');
+                if (!item) return;
+                var nameEl = item.querySelector('.details h3');
+                var avatarEl = item.querySelector('img');
+                var chatTarget = {
+                    name: nameEl ? nameEl.textContent.trim() : 'Unknown',
+                    photo: avatarEl ? avatarEl.src : ''
+                };
+                try {
+                    localStorage.setItem('chatTarget', JSON.stringify(chatTarget));
+                } catch (err) {
+                    console.warn('Could not set chatTarget in localStorage', err);
+                }
+                // Navigate to messages page
+                window.location.href = 'Messages.html';
+            }
+
+            // Send Request: show toast
+            if (e.target && e.target.classList && e.target.classList.contains('send-request')) {
+                var toastEl = document.getElementById('requestToast');
+                if (toastEl) {
+                    var toast = new bootstrap.Toast(toastEl);
+                    toast.show();
+                } else {
+                    alert('Request sent successfully.');
+                }
             }
         });
     </script>

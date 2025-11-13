@@ -79,7 +79,9 @@ function bindSignup() {
         if (!username || !email || !password) return alert("Please fill all required fields!");
 
         try {
+            console.log('Attempting createUserWithEmailAndPassword for', email);
             const cred = await firebase.auth().createUserWithEmailAndPassword(email, password);
+            console.log('createUserWithEmailAndPassword success:', cred);
             const uid = cred.user.uid;
 
             const profile = {
@@ -91,8 +93,29 @@ function bindSignup() {
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            await firebase.firestore().collection("users").doc(uid).set(profile);
-            saveUserProfile(profile);
+            try {
+                await firebase.firestore().collection("users").doc(uid).set(profile);
+                saveUserProfile(profile);
+            } catch (fireErr) {
+                console.warn('Firestore write failed, trying Realtime Database as fallback', fireErr);
+                try {
+                    if (window.firebaseDatabase) {
+                        await firebaseDatabase.ref('users/' + uid).set(profile);
+                        saveUserProfile(profile);
+                    } else if (firebase.database) {
+                        // older SDK reference
+                        await firebase.database().ref('users/' + uid).set(profile);
+                        saveUserProfile(profile);
+                    } else {
+                        // fallback to localStorage only
+                        saveUserProfile(profile);
+                        console.warn('No database SDK available, profile saved locally only');
+                    }
+                } catch (dbErr) {
+                    console.warn('Realtime DB write failed, saving profile locally only', dbErr);
+                    saveUserProfile(profile);
+                }
+            }
 
             alert("Signup successful! Redirecting to login...");
             form.reset();
@@ -104,7 +127,17 @@ function bindSignup() {
 
         } catch (err) {
             console.error("Signup error:", err);
-            alert(err.message || "Signup failed!");
+            // Provide code + message where available for easier troubleshooting
+            var code = err && err.code ? err.code : 'unknown';
+            var msg = err && err.message ? err.message : String(err);
+            // If email already in use, suggest login
+            if (code === 'auth/email-already-in-use') {
+                if (confirm('The email is already used. Do you want to go to login page?')) {
+                    window.location.href = 'login.html';
+                }
+            } else {
+                alert('Signup failed (' + code + '): ' + msg);
+            }
         }
     });
 }
@@ -144,8 +177,25 @@ function bindLogin() {
 
             const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
 
-            const doc = await firebase.firestore().collection("users").doc(cred.user.uid).get();
-            const profile = doc.exists ? doc.data() : { uid: cred.user.uid, email };
+            let profile = null;
+            try {
+                const doc = await firebase.firestore().collection("users").doc(cred.user.uid).get();
+                profile = doc.exists ? doc.data() : null;
+            } catch (readErr) {
+                console.warn('Firestore read failed, attempting Realtime DB read', readErr);
+                try {
+                    if (window.firebaseDatabase) {
+                        const snap = await firebaseDatabase.ref('users/' + cred.user.uid).once('value');
+                        profile = snap.exists() ? snap.val() : null;
+                    } else if (firebase.database) {
+                        const snap = await firebase.database().ref('users/' + cred.user.uid).once('value');
+                        profile = snap.exists() ? snap.val() : null;
+                    }
+                } catch (dbReadErr) {
+                    console.warn('Realtime DB read failed', dbReadErr);
+                }
+            }
+            if (!profile) profile = { uid: cred.user.uid, email };
             saveUserProfile(profile);
 
             console.log("Login successful:", profile.email);

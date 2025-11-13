@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Firestore Test - SkillSwap</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+  <div class="container">
+    <h3>Firestore / Realtime DB Write Test</h3>
+    <p>Use this to test whether your web app can write to Firestore / Realtime Database.</p>
+    <div class="mb-3">
+      <label class="form-label">Document ID (uid)</label>
+      <input id="uid" class="form-control" placeholder="test-uid-123" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Field name</label>
+      <input id="field" class="form-control" placeholder="testField" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Value</label>
+      <input id="value" class="form-control" placeholder="hello world" />
+    </div>
+    <button id="writeBtn" class="btn btn-primary">Write to Firestore</button>
+    <button id="writeDbBtn" class="btn btn-secondary">Write to Realtime DB</button>
+      <hr />
+      <h5>Auth / SDK Diagnostics</h5>
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input id="diagEmail" class="form-control" placeholder="email@example.com" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input id="diagPassword" type="password" class="form-control" placeholder="password" />
+      </div>
+      <button id="signInBtn" class="btn btn-success">Sign in with Email</button>
+      <button id="anonBtn" class="btn btn-warning">Sign in Anonymously</button>
+      <button id="signOutBtn" class="btn btn-light">Sign out</button>
+      <div class="mt-3"><strong>SDK Info:</strong> <span id="sdkInfo"></span></div>
+      <div><strong>Auth user:</strong> <pre id="authUser" style="display:inline-block;margin:0;padding:6px;background:#fff;border:1px solid #e9ecef;border-radius:4px;"></pre></div>
+
+    <h5 class="mt-4">Output</h5>
+    <pre id="output" style="white-space:pre-wrap;background:#f8f9fa;padding:12px;border-radius:6px;border:1px solid #e9ecef;height:220px;overflow:auto;"></pre>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="/firebase-config.js"></script>
+  <script>
+    const out = document.getElementById('output');
+    function log(msg){ out.textContent += msg + '\n'; out.scrollTop = out.scrollHeight; }
+
+    function diag(msg){ document.getElementById('sdkInfo').textContent = msg; }
+
+    function updateAuthUI(){
+      const u = window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser : null;
+      document.getElementById('authUser').textContent = u ? JSON.stringify({ uid: u.uid, email: u.email, isAnonymous: u.isAnonymous }, null, 2) : 'not signed in';
+    }
+
+    // show basic SDK state
+    try {
+      const apps = firebase.apps ? firebase.apps.length : 0;
+      diag('apps=' + apps + ' | firestore=' + (window.firebaseFirestore? 'ok':'null') + ' | database=' + (window.firebaseDatabase? 'ok':'null'));
+    } catch(e){ diag('SDK check error: '+e.message); }
+
+    if (window.firebaseAuth) {
+      window.firebaseAuth.onAuthStateChanged(user => { updateAuthUI(); log('Auth state changed: ' + (user ? user.uid : 'signed out')); });
+      updateAuthUI();
+    }
+
+    // autofill UID when signed in
+    window.firebaseAuth && window.firebaseAuth.onAuthStateChanged(user => {
+      if (user) {
+        try { document.getElementById('uid').value = user.uid; } catch(e){}
+      }
+    });
+
+    document.getElementById('writeBtn').addEventListener('click', async ()=>{
+      const uid = document.getElementById('uid').value.trim() || 'test-uid';
+      const field = document.getElementById('field').value.trim() || 'testField';
+      const value = document.getElementById('value').value.trim() || 'hello';
+      log('Attempting Firestore write to users/' + uid);
+      try{
+        if (!window.firebaseFirestore) throw new Error('firebaseFirestore is not available');
+        const res = await window.firebaseFirestore.collection('users').doc(uid).set({ [field]: value, testAt: new Date().toISOString() });
+        log('Firestore write succeeded: ' + JSON.stringify(res));
+      }catch(err){
+        console.error('Firestore write error', err);
+        try { log('Firestore write FAILED: ' + (err && err.message ? err.message : String(err))); } catch(e){}
+        try { log('Full error (console):'); console.dir(err); } catch(e){}
+      }
+    });
+
+    document.getElementById('writeDbBtn').addEventListener('click', async ()=>{
+      const uid = document.getElementById('uid').value.trim() || 'test-uid';
+      const field = document.getElementById('field').value.trim() || 'testField';
+      const value = document.getElementById('value').value.trim() || 'hello';
+      log('Attempting Realtime DB write to users/' + uid);
+      try{
+        if (!window.firebaseDatabase) throw new Error('Realtime DB not initialized (firebaseDatabase is null)');
+        const res = await window.firebaseDatabase.ref('users/' + uid).set({ [field]: value, testAt: new Date().toISOString() });
+        log('Realtime DB write succeeded: ' + JSON.stringify(res));
+      }catch(err){
+        console.error('Realtime DB write error', err);
+        try { log('Realtime DB write FAILED: ' + (err && err.message ? err.message : String(err))); } catch(e){}
+        try { log('Full error (console):'); console.dir(err); } catch(e){}
+      }
+    });
+
+    // Auth helpers
+    document.getElementById('signInBtn').addEventListener('click', async ()=>{
+      const em = document.getElementById('diagEmail').value.trim();
+      const pw = document.getElementById('diagPassword').value;
+      if (!em || !pw) return alert('Enter email & password');
+      try { log('Signing in...'); await window.firebaseAuth.signInWithEmailAndPassword(em, pw); log('Sign-in OK'); } catch(err){ console.error(err); log('Sign-in FAILED: '+(err.message||err)); }
+    });
+
+    document.getElementById('anonBtn').addEventListener('click', async ()=>{
+      try { log('Signing in anonymously...'); await window.firebaseAuth.signInAnonymously(); log('Anonymous sign-in OK'); } catch(err){ console.error(err); log('Anon sign-in FAILED: '+(err.message||err)); }
+    });
+
+    document.getElementById('signOutBtn').addEventListener('click', async ()=>{
+      try { await window.firebaseAuth.signOut(); log('Signed out'); } catch(err){ console.error(err); log('Sign out failed: '+(err.message||err)); }
+    });
+  </script>
+</body>
+</html>

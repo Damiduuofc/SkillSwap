@@ -248,21 +248,114 @@
                     if (currentUser) {
                         var userProfile = JSON.parse(currentUser);
                         var username = userProfile.username || userProfile.email || 'User';
-                        
+
                         // Update sidebar username
                         var sidebarUsername = document.getElementById('sidebar-username');
                         if (sidebarUsername) {
                             sidebarUsername.textContent = username;
                         }
                     }
+
+                    // Load chat target from localStorage
+                    var chatTargetRaw = localStorage.getItem('chatTarget');
+                    if (chatTargetRaw) {
+                        var chatTarget = JSON.parse(chatTargetRaw);
+                        // Update chat header
+                        var header = document.querySelector('.chat-header');
+                        if (header) {
+                            var avatar = header.querySelector('.user-avatar');
+                            if (avatar && chatTarget.photo) avatar.src = chatTarget.photo;
+                            // update text (remove existing text nodes then add name)
+                            header.childNodes.forEach(n => {
+                                if (n.nodeType === Node.TEXT_NODE) n.textContent = '';
+                            });
+                            header.appendChild(document.createTextNode(' ' + (chatTarget.name || 'Chat')));
+                        }
+
+                        // Load messages for this chat from sessionStorage
+                        var chatKey = 'chat_with_' + (chatTarget.name || 'unknown');
+                        var saved = sessionStorage.getItem(chatKey);
+                        var chatBox = document.querySelector('.chat-box');
+                        if (saved && chatBox) {
+                            try {
+                                var messages = JSON.parse(saved);
+                                chatBox.innerHTML = '';
+                                messages.forEach(m => {
+                                    var div = document.createElement('div');
+                                    div.className = 'message ' + (m.sentByMe ? 'sent' : 'received');
+                                    div.textContent = m.text;
+                                    var time = document.createElement('span');
+                                    time.className = 'message-time';
+                                    time.textContent = m.time || '';
+                                    div.appendChild(time);
+                                    chatBox.appendChild(div);
+                                });
+                                // scroll to bottom
+                                chatBox.scrollTop = chatBox.scrollHeight;
+                            } catch (err) {
+                                console.warn('Invalid saved chat data', err);
+                            }
+                        }
+                    }
                 } catch (e) {
                     console.warn('Error updating Messages page with user data:', e);
                 }
             }
-            
+
+            // send message handler
+            function sendMessage() {
+                var input = document.querySelector('.chat-input input');
+                var text = input.value && input.value.trim();
+                if (!text) return;
+                var chatBox = document.querySelector('.chat-box');
+                var msg = document.createElement('div');
+                msg.className = 'message sent';
+                msg.textContent = text;
+                var time = document.createElement('span');
+                time.className = 'message-time';
+                var now = new Date();
+                var hh = now.getHours();
+                var mm = now.getMinutes();
+                var ampm = hh >= 12 ? 'PM' : 'AM';
+                hh = hh % 12 || 12;
+                time.textContent = hh + ':' + (mm<10?('0'+mm):mm) + ' ' + ampm;
+                msg.appendChild(time);
+                chatBox.appendChild(msg);
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                // persist in sessionStorage for this chat
+                var chatTargetRaw = localStorage.getItem('chatTarget');
+                var chatKey = 'chat_with_unknown';
+                if (chatTargetRaw) {
+                    try {
+                        var ct = JSON.parse(chatTargetRaw);
+                        chatKey = 'chat_with_' + (ct.name || 'unknown');
+                    } catch(e) {}
+                }
+                var saved = sessionStorage.getItem(chatKey);
+                var arr = saved ? JSON.parse(saved) : [];
+                arr.push({ text: text, time: time.textContent, sentByMe: true });
+                sessionStorage.setItem(chatKey, JSON.stringify(arr));
+                input.value = '';
+            }
+
+            // wire send button and Enter key
+            document.addEventListener('click', function(e) {
+                if (e.target && e.target.matches('.chat-input button')) {
+                    sendMessage();
+                }
+            });
+            document.addEventListener('keydown', function(e) {
+                var input = document.querySelector('.chat-input input');
+                if (e.key === 'Enter' && document.activeElement === input) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
             // Update immediately
             updateMessagesWithUserData();
-            
+
             // Also update when Firebase auth state changes
             if (window.firebaseAuth) {
                 firebaseAuth.onAuthStateChanged(function(user) {

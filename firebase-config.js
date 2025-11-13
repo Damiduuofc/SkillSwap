@@ -19,5 +19,19 @@ if (!firebase.apps.length) {
 
 var firebaseAuth = firebase.auth();
 var firebaseFirestore = firebase.firestore();
+var firebaseDatabase = null;
+if (firebase.database) {
+  try {
+    firebaseDatabase = firebase.database();
+  } catch (e) {
+    console.warn('Realtime Database not initialized:', e);
+  }
+} else {
+  console.warn('firebase.database() is not available (database SDK not loaded).');
+}
+// expose common handles on window for other scripts
+window.firebaseAuth = firebaseAuth;
+window.firebaseFirestore = firebaseFirestore;
+window.firebaseDatabase = firebaseDatabase;
 
 console.log('Firebase initialized (compat mode)');
