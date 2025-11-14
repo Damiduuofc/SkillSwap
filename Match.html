@@ -69,187 +69,12 @@
             display: flex;
             flex-direction: column;
         }
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-blue) !important;
-        }
-        .navbar-brand i {
-            margin-right: 8px;
-        }
-        .navbar-nav .nav-link {
-            color: var(--dark-text) !important;
-            font-weight: 500;
-            margin: 0 15px;
-            position: relative;
-            transition: color 0.3s ease;
-            padding-bottom: 2px;
-            line-height: 1.2;
-        }
-        .navbar-nav .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0%;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: #0069ab;
-            transition: width 0.3s ease;
-        }
-        .navbar-nav .nav-link:hover {
-            color: #0069ab !important;
-        }
-        .navbar-nav .nav-link:hover::after {
-            width: 100%;
-        }
-        .btn-signup-corner {
-            background: linear-gradient(100deg, #b6e6ff 0%, #0095DE 100%);
-            color: white;
-            padding: 10px 32px;
-            border-radius: 12px;
-            border: none;
-            font-weight: bold;
-            font-size: 1rem;
-            box-shadow: 0 0 15px rgba(182, 230, 255, 0.6);
-            transition: all 0.3s ease, transform 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-signup-corner::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: rgba(182, 230, 255, 0.3);
-            opacity: 0;
-            transition: all 0.5s ease;
-            transform: rotate(45deg);
-            pointer-events: none;
-        }
-        .btn-signup-corner:hover::before {
-            opacity: 1;
-            top: -25%;
-            left: -25%;
-        }
-        .btn-signup-corner:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 0 25px #b6e6ff, 0 6px 20px rgba(0, 164, 244, 0.4);
-            background: linear-gradient(90deg, #81D4FA 0%, #00a4f4 100%);
-            color: white !important;
-        }
-        /* Desktop layout */
-        @media (min-width: 992px) {
-            .navbar-collapse {
-                justify-content: flex-end !important;
-            }
-            .navbar-nav {
-                margin-right: 20px;
-            }
-            .btn-signup-corner {
-                margin-left: 0;
-            }
-        }
-        /* Mobile layout */
-        @media (max-width: 991px) {
-            .navbar-collapse {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-            }
-            .navbar-nav {
-                flex-direction: column;
-                align-items: flex-start;
-                margin-bottom: 0;
-            }
-            .navbar-nav .nav-item {
-                margin: 5px 0;
-            }
-            .navbar-nav .nav-link {
-                padding: 10px 0;
-            }
-            .btn-signup-corner {
-                margin: 0;
-                align-self: center;
-            }
-        }
-        .navbar-toggler {
-            border: none;
-            padding: 0.25rem 0.75rem;
-            font-size: 1.25rem;
-            line-height: 1;
-            background-color: transparent;
-            border-radius: 0.375rem;
-            transition: box-shadow 0.15s ease-in-out;
-        }
-        .navbar-toggler:focus {
-            box-shadow: 0 0 0 0.25rem rgba(79, 195, 247, 0.25);
-            outline: 0;
-        }
-        .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(79, 195, 247, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        }
-        /* MAIN */
         main {
             flex: 1;
         }
         h2 {
             margin-bottom: 20px;
         }
-        .view-options {
-            margin-bottom: 20px;
-            color: #666;
-        }
-        .matches {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 30px;
-            text-align: center;
-        }
-        .img-container {
-            border-radius: 80%;
-            padding: 10px;
-            display: inline-block;
-        }
-        .match-card img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-        }
-        .match-card h3 {
-            margin-top: 10px;
-            font-size: 16px;
-        }
-        .match-card p {
-            font-size: 12px;
-            color: #666;
-            margin-top: 4px;
-            text-align: center;
-        }
-        .buttons {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        button {
-            padding: 10px 40px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .primary {
-            background: #2f80ed;
-            color: white;
-        }
-        .secondary {
-            background: #eee;
-            color: #555;
-        }
-        /* Toggle links */
         .view-toggle {
             margin-bottom: 20px;
             font-size: 1em;
@@ -269,18 +94,15 @@
             font-weight: normal;
             text-decoration: none;
         }
-        /* Grid layout */
         .content {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 30px;
             margin-bottom: 40px;
         }
-        /* List layout */
         .content-container.list-view .content {
             display: block;
         }
-        /* Common item style */
         .item {
             background-color: #fff;
             border-radius: 12px;
@@ -308,7 +130,6 @@
             color: #555;
             line-height: 1.4;
         }
-        /* List view adjustments */
         .content-container.list-view .item {
             display: flex;
             align-items: center;
@@ -333,7 +154,6 @@
             display: flex;
             gap: 10px;
         }
-        /* Buttons inside cards */
         .card-buttons {
             display: flex;
             justify-content: center;
@@ -364,26 +184,6 @@
             opacity: 0.9;
             transform: translateY(-2px);
         }
-        @media(max-width: 600px) {
-            .content {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                gap: 20px;
-            }
-            .content-container.list-view .item {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-            .content-container.list-view .item img {
-                margin-right: 0;
-                margin-bottom: 10px;
-            }
-            .content-container.list-view .card-buttons {
-                margin-top: 10px;
-                justify-content: center;
-            }
-        }
-        /* footer */
         .footer {
             background: linear-gradient(135deg, #f8fdff 0%, #eff9ff 100%);
             color: var(--dark-text);
@@ -480,24 +280,6 @@
             font-weight: 500;
             margin: 0;
         }
-        .decorative-dots {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background-image: radial-gradient(var(--primary-blue) 2px, transparent 2px);
-            background-size: 20px 20px;
-            opacity: 0.15;
-            z-index: 0;
-        }
-        .dots-1 {
-            top: 20px;
-            left: 20px;
-        }
-        .dots-2 {
-            bottom: 20px;
-            right: 20px;
-        }
-        /* Mobile Responsiveness */
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -507,61 +289,24 @@
             .content-wrapper {
                 flex-direction: column;
             }
-            .footer {
-                padding: 40px 0 20px;
-            }
-            .footer-brand {
-                font-size: 1.5rem;
-                align-items: center;
-                margin-bottom: 25px;
-                text-align: center;
-            }
-            .footer-description {
-                text-align: center;
-                max-width: 100%;
-                margin-bottom: 35px;
-            }
-            .footer-title {
-                text-align: center;
-                margin-bottom: 20px;
-            }
-            .footer-links {
-                text-align: center;
-            }
-            .social-links {
-                justify-content: center;
-                margin-top: 20px;
-            }
-            .footer-bottom {
-                flex-direction: row;
-                justify-content: center;
-                text-align: center;
-                gap: 15px;
-            }
-            .decorative-dots {
-                width: 80px;
-                height: 80px;
-                background-size: 15px 15px;
-            }
         }
-        @media (max-width: 576px) {
-            .footer {
-                padding: 30px 0 15px;
+        @media(max-width: 600px) {
+            .content {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 20px;
             }
-            .col-lg-2,
-            .col-md-4 {
-                margin-bottom: 30px;
+            .content-container.list-view .item {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
             }
-            .footer-title {
-                font-size: 1.1rem;
-                margin-bottom: 15px;
+            .content-container.list-view .item img {
+                margin-right: 0;
+                margin-bottom: 10px;
             }
-            .footer-links li {
-                margin-bottom: 8px;
-            }
-            .social-links a {
-                width: 40px;
-                height: 40px;
+            .content-container.list-view .card-buttons {
+                margin-top: 10px;
+                justify-content: center;
             }
         }
     </style>
@@ -571,7 +316,7 @@
         <div class="sidebar">
             <div class="text-center mb-4">
                 <img src="./public/pp.png" alt="Profile Picture" class="rounded-circle mx-auto" style="width: 60px; height: 60px;">
-                <p class="mt-2" id="sidebar-username">Sophia</p>
+                <p class="mt-2" id="sidebar-username">User</p>
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item">
@@ -592,100 +337,17 @@
             </div>
         </div>
         <div class="main">
-            <!-- MAIN CONTENT -->
             <main>
                 <div class="content-container" style="flex: 1; overflow-y: auto;">
                     <h2>Your Matches</h2>
-                    <!-- Toggle links -->
                     <div class="view-toggle">
                         <span id="gridBtn" class="active-toggle">Grid View</span> | <span id="listBtn">List View</span>
                     </div>
                     <div class="content">
-                        <div class="item">
-                            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Sarah M.">
-                            <div class="details">
-                                <h3>Sarah M.</h3>
-                                <p>Mutual Skills: Teach - Photography, Learn - Spanish</p>
-                            </div>
-                                <div class="card-buttons">
-                                        <button class="start-chat">Start Chat</button>
-                                        <button class="send-request">Send Request</button>
-                                    </div>
-                        </div>
-                        <div class="item">
-                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="David L.">
-                            <div class="details">
-                                <h3>David L.</h3>
-                                <p>Mutual Skills: Teach - Coding, Learn - French</p>
-                            </div>
-                            <div class="card-buttons">
-                                <button class="start-chat">Start Chat</button>
-                                <button class="send-request">Send Request</button>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Emily R.">
-                            <div class="details">
-                                <h3>Emily R.</h3>
-                                <p>Mutual Skills: Teach - Yoga, Learn - Italian</p>
-                            </div>
-                            <div class="card-buttons">
-                                <button class="start-chat">Start Chat</button>
-                                <button class="send-request">Send Request</button>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <img src="https://randomuser.me/api/portraits/men/34.jpg" alt="Michael B.">
-                            <div class="details">
-                                <h3>Michael B.</h3>
-                                <p>Mutual Skills: Teach - Music, Learn - German</p>
-                            </div>
-                            <div class="card-buttons">
-                                <button class="start-chat">Start Chat</button>
-                                <button class="send-request">Send Request</button>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jessica K.">
-                            <div class="details">
-                                <h3>Jessica K.</h3>
-                                <p>Mutual Skills: Teach - Writing, Learn - Japanese</p>
-                            </div>
-                            <div class="card-buttons">
-                                <button class="start-chat">Start Chat</button>
-                                <button class="send-request">Send Request</button>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <img src="https://randomuser.me/api/portraits/men/12.jpg" alt="Daniel S.">
-                            <div class="details">
-                                <h3>Daniel S.</h3>
-                                <p>Mutual Skills: Teach - Cooking, Learn - Mandarin</p>
-                            </div>
-                            <div class="card-buttons">
-                                <button class="start-chat">Start Chat</button>
-                                <button class="send-request">Send Request</button>
-                            </div>
-                        </div>
+                        <!-- Demo matches will be loaded here by JavaScript -->
                     </div>
-                    <script>
-                        const gridBtn = document.getElementById('gridBtn');
-                        const listBtn = document.getElementById('listBtn');
-                        const contentContainer = document.querySelector('.content-container');
-                        gridBtn.addEventListener('click', () => {
-                            contentContainer.classList.remove('list-view');
-                            gridBtn.classList.add('active-toggle');
-                            listBtn.classList.remove('active-toggle');
-                        });
-                        listBtn.addEventListener('click', () => {
-                            contentContainer.classList.add('list-view');
-                            listBtn.classList.add('active-toggle');
-                            gridBtn.classList.remove('active-toggle');
-                        });
-                    </script>
                 </div>
             </main>
-            <!-- Footer -->
             <footer class="footer">
                 <div class="container">
                     <div class="row">
@@ -738,114 +400,11 @@
                         </div>
                         <p class="copyright-text">&copy; SkillSwap 2025. All Rights Reserved</p>
                     </div>
-                    <div class="decorative-dots dots-1"></div>
-                    <div class="decorative-dots dots-2"></div>
                 </div>
             </footer>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="/firebase-config.js"></script>
-    <script src="/ui-auth.js"></script>
-    <script>
-        // Update Match page with user profile data and show matches from Firestore
-        document.addEventListener('DOMContentLoaded', function() {
-            function updateSidebarUsername() {
-                try {
-                    var currentUser = localStorage.getItem('currentUser');
-                    if (currentUser) {
-                        var userProfile = JSON.parse(currentUser);
-                        var username = userProfile.username || userProfile.email || 'User';
-                        var sidebarUsername = document.getElementById('sidebar-username');
-                        if (sidebarUsername) {
-                            sidebarUsername.textContent = username;
-                        }
-                    }
-                } catch (e) {
-                    console.warn('Error updating Match page with user data:', e);
-                }
-            }
 
-            // Firestore matching logic
-            async function showMatches() {
-                try {
-                    // Get current user info from localStorage
-                    var currentUser = localStorage.getItem('currentUser');
-                    if (!currentUser) return;
-                    var userProfile = JSON.parse(currentUser);
-                    var learnSkills = userProfile.learnSkills || [];
-                    if (!Array.isArray(learnSkills) || learnSkills.length === 0) return;
-
-                    // Firestore setup
-                    var db = firebase.firestore();
-                    // Query for users whose 'teachSkills' array contains any of the user's 'learnSkills'
-                    var matches = [];
-                    for (let skill of learnSkills) {
-                        let snapshot = await db.collection('users').where('teachSkills', 'array-contains', skill).get();
-                        snapshot.forEach(doc => {
-                            let data = doc.data();
-                            // Avoid showing current user
-                            if (data.uid !== userProfile.uid) {
-                                matches.push({
-                                    name: data.username || data.email || 'User',
-                                    photo: data.photoURL || 'https://randomuser.me/api/portraits/lego/1.jpg',
-                                    teach: data.teachSkills ? data.teachSkills.join(', ') : '',
-                                    learn: data.learnSkills ? data.learnSkills.join(', ') : '',
-                                });
-                            }
-                        });
-                    }
-
-                    // Remove duplicates
-                    matches = matches.filter((v,i,a)=>a.findIndex(t=>(t.name===v.name))===i);
-
-                    // Render matches
-                    var contentDiv = document.querySelector('.content');
-                    if (contentDiv) {
-                        contentDiv.innerHTML = '';
-                        if (matches.length === 0) {
-                            contentDiv.innerHTML = '<p>No matches found for your learning needs.</p>';
-                        } else {
-                            matches.forEach(match => {
-                                var item = document.createElement('div');
-                                item.className = 'item';
-                                item.innerHTML = `
-                                    <img src="${match.photo}" alt="${match.name}">
-                                    <div class="details">
-                                        <h3>${match.name}</h3>
-                                        <p>Mutual Skills: Teach - ${match.teach}, Learn - ${match.learn}</p>
-                                    </div>
-                                    <div class="card-buttons">
-                                        <button class="start-chat">Start Chat</button>
-                                        <button class="send-request">Send Request</button>
-                                    </div>
-                                `;
-                                contentDiv.appendChild(item);
-                            });
-                        }
-                    }
-                } catch (e) {
-                    console.warn('Error fetching matches:', e);
-                }
-            }
-
-            updateSidebarUsername();
-            showMatches();
-
-            // Also update when Firebase auth state changes
-            if (window.firebaseAuth) {
-                firebaseAuth.onAuthStateChanged(function(user) {
-                    if (user) {
-                        updateSidebarUsername();
-                        showMatches();
-                    }
-                });
-            }
-        });
-    </script>
     <!-- Toast for request confirmation -->
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
         <div id="requestToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -859,7 +418,104 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
     <script>
+        // Grid/List view toggle
+        const gridBtn = document.getElementById('gridBtn');
+        const listBtn = document.getElementById('listBtn');
+        const contentContainer = document.querySelector('.content-container');
+        
+        gridBtn.addEventListener('click', () => {
+            contentContainer.classList.remove('list-view');
+            gridBtn.classList.add('active-toggle');
+            listBtn.classList.remove('active-toggle');
+        });
+        
+        listBtn.addEventListener('click', () => {
+            contentContainer.classList.add('list-view');
+            listBtn.classList.add('active-toggle');
+            gridBtn.classList.remove('active-toggle');
+        });
+
+        // Demo match data
+        const matchData = [
+            {
+                name: "Sarah M.",
+                skill: "Teach - Photography, Learn - Spanish",
+                image: "https://randomuser.me/api/portraits/women/68.jpg"
+            },
+            {
+                name: "David L.",
+                skill: "Teach - Coding, Learn - French",
+                image: "https://randomuser.me/api/portraits/men/75.jpg"
+            },
+            {
+                name: "Emily R.",
+                skill: "Teach - Yoga, Learn - Italian",
+                image: "https://randomuser.me/api/portraits/women/65.jpg"
+            },
+            {
+                name: "Michael B.",
+                skill: "Teach - Music, Learn - German",
+                image: "https://randomuser.me/api/portraits/men/34.jpg"
+            },
+            {
+                name: "Jessica K.",
+                skill: "Teach - Writing, Learn - Japanese",
+                image: "https://randomuser.me/api/portraits/women/44.jpg"
+            },
+            {
+                name: "Daniel S.",
+                skill: "Teach - Cooking, Learn - Mandarin",
+                image: "https://randomuser.me/api/portraits/men/12.jpg"
+            }
+        ];
+
+        // Render demo matches immediately
+        function renderDemoMatches() {
+            const content = document.querySelector(".content");
+            if (content) {
+                content.innerHTML = matchData.map(user => `
+                    <div class="item">
+                        <img src="${user.image}" alt="${user.name}">
+                        <div class="details">
+                            <h3>${user.name}</h3>
+                            <p>Mutual Skills: ${user.skill}</p>
+                        </div>
+                        <div class="card-buttons">
+                            <button class="start-chat">Start Chat</button>
+                            <button class="send-request">Send Request</button>
+                        </div>
+                    </div>
+                `).join("");
+            }
+        }
+
+        // Call it immediately
+        renderDemoMatches();
+
+        // Update sidebar username from localStorage only
+        function updateSidebarUsername() {
+            try {
+                var currentUser = localStorage.getItem('currentUser');
+                if (currentUser) {
+                    var userProfile = JSON.parse(currentUser);
+                    var username = userProfile.username || userProfile.email || 'User';
+                    var sidebarUsername = document.getElementById('sidebar-username');
+                    if (sidebarUsername) {
+                        sidebarUsername.textContent = username;
+                    }
+                }
+            } catch (e) {
+                console.warn('Error updating sidebar username:', e);
+            }
+        }
+
+        // Run on page load
+        updateSidebarUsername();
+
         // Delegate click handlers for Start Chat and Send Request buttons
         document.addEventListener('click', function(e) {
             // Start Chat: save target to localStorage and navigate to Messages.html
@@ -877,7 +533,6 @@
                 } catch (err) {
                     console.warn('Could not set chatTarget in localStorage', err);
                 }
-                // Navigate to messages page
                 window.location.href = 'Messages.html';
             }
 

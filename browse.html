@@ -763,8 +763,6 @@
     <script src="/firebase-config.js"></script>
     <script src="/ui-auth.js"></script>
 <script>
-    
-// Simulated login check (you can replace with Firebase/Auth later)
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("search-query");
   const cards = document.querySelectorAll(".skill-card");
@@ -776,14 +774,31 @@ document.addEventListener("DOMContentLoaded", () => {
   // Check if user is logged in
   const userLoggedIn = localStorage.getItem("userLoggedIn") === "true";
 
-  // Filter function
+  // ------------------------
+  // Navbar: update signup button
+  // ------------------------
+  const signupBtn = document.querySelector(".btn-signup-corner");
+  if (userLoggedIn) {
+    signupBtn.textContent = "Logged In";
+    signupBtn.disabled = true;
+    signupBtn.style.backgroundColor = "#4FC3F7";
+  }
+
+  // Ensure navbar links are always visible (fix collapse issues)
+  const navbarCollapse = document.getElementById("navbarNav");
+  navbarCollapse.classList.add("show");
+
+  // ------------------------
+  // Search & Filter logic
+  // ------------------------
   function filterCards() {
     const query = searchInput.value.toLowerCase();
     let anyVisible = false;
 
     cards.forEach(card => {
       const name = card.querySelector("[data-user-name]").textContent.toLowerCase();
-      const skills = Array.from(card.querySelectorAll("[data-user-skills] .skill-tag")).map(el => el.textContent.toLowerCase());
+      const skills = Array.from(card.querySelectorAll("[data-user-skills] .skill-tag"))
+        .map(el => el.textContent.toLowerCase());
       const matchesSearch = name.includes(query) || skills.some(skill => skill.includes(query));
       const matchesFilter = activeFilters.skill ? skills.includes(activeFilters.skill.toLowerCase()) : true;
       const showCard = matchesSearch && matchesFilter;
@@ -814,6 +829,9 @@ document.addEventListener("DOMContentLoaded", () => {
     filterCards();
   });
 
+  // ------------------------
+  // Request match buttons
+  // ------------------------
   const matchButtons = document.querySelectorAll("[data-action='request-match']");
   matchButtons.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -834,16 +852,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 2000);
     });
   });
-
-  const signupBtn = document.querySelector(".btn-signup-corner");
-  if (userLoggedIn) {
-    signupBtn.textContent = "Logged In";
-    signupBtn.disabled = true;
-    signupBtn.style.backgroundColor = "#4FC3F7";
-  }
 });
 
-// Simulate login/signup for testing (replace with real auth later)
+// ------------------------
+// Simulate login/logout
+// ------------------------
 function loginUser() {
   localStorage.setItem("userLoggedIn", "true");
   alert("You are now logged in!");
@@ -856,6 +869,7 @@ function logoutUser() {
   location.reload();
 }
 </script>
+
 
 </body>
 </html>

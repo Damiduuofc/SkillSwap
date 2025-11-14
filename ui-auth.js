@@ -61,16 +61,14 @@
         return container;
     }
 
-    function replaceSignupWithAvatar(profile) {
-        var signupButton = document.querySelector('.btn-signup-corner');
-        if (!signupButton) return;
-        var parent = signupButton.parentElement;
-        if (!parent) return;
-        var wrapper = document.createElement('div');
-        wrapper.style.marginLeft = '12px';
-        wrapper.appendChild(createAvatarDropdown(profile));
-        parent.replaceWith(wrapper);
-    }
+   function replaceSignupWithAvatar(profile) {
+    var signupButton = document.querySelector('.btn-signup-corner');
+    if (!signupButton) return;
+
+    var avatarDropdown = createAvatarDropdown(profile);
+    signupButton.replaceWith(avatarDropdown); // replace button only, keep parent
+}
+
 
     function updateHeroCTA(isLoggedIn) {
         var heroLoginBtn = document.querySelector('.btn-login');
